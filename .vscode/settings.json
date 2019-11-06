@@ -1,4 +1,11 @@
 {
     "editor.formatOnSave": true,
-    "gitlens.blame.compact": false
+    "gitlens.blame.compact": false,
+    "files.associations": {
+        "new": "cpp",
+        "*.tcc": "cpp",
+        "iosfwd": "cpp",
+        "ostream": "cpp",
+        "iostream": "cpp"
+    }
 }

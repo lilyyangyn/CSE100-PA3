@@ -1,7 +1,10 @@
 /**
- * TODO: file header
+ * This file declares and also implements the HCNode class,
+ * including the private variables, the methods and their
+ * implementation
  *
- * Author:
+ * Author: Yuening Yang, Shenlang Zhou
+ * Email: y3yang@ucsd.edu
  */
 #ifndef HCNODE_HPP
 #define HCNODE_HPP
@@ -21,11 +24,17 @@ class HCNode {
     HCNode* c0;          // pointer to '0' child
     HCNode* c1;          // pointer to '1' child
     HCNode* p;           // pointer to parent
+    bool isZeroChild;
 
     /* Constructor that initialize a HCNode */
     HCNode(unsigned int count, byte symbol, HCNode* c0 = 0, HCNode* c1 = 0,
            HCNode* p = 0)
-        : count(count), symbol(symbol), c0(c0), c1(c1), p(p) {}
+        : count(count),
+          symbol(symbol),
+          c0(c0),
+          c1(c1),
+          p(p),
+          isZeroChild(false) {}
 };
 
 /* For printing an HCNode to an ostream. Possibly useful for debugging */
@@ -40,7 +49,15 @@ ostream& operator<<(ostream& stm, const HCNode& n) {
  * has higher prioruty.
  */
 struct HCNodePtrComp {
-    /* TODO */
-    bool operator()(HCNode*& lhs, HCNode*& rhs) const { return false; }
+    /* a comparator of HCNode pointer, can be used to generate MinHeap
+      params: 2 HCNodes to be compared
+      return:  true if lhs > rhs, false otherwise*/
+    bool operator()(HCNode*& lhs, HCNode*& rhs) const {
+        if (lhs->count == rhs->count) {
+            // if count the same, the one with larger ASCII has higher priority
+            return lhs->symbol < rhs->symbol;
+        }
+        return lhs->count > rhs->count;
+    }
 };
 #endif  // HCNODE_HPP

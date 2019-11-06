@@ -7,6 +7,7 @@
 using namespace std;
 using namespace testing;
 
+/*
 TEST(BitInputStreamTests, SIMPLE_TEST) {
     string bitsStr = "10000000";
     string ascii = string(1, stoi(bitsStr, nullptr, 2));
@@ -18,3 +19,4 @@ TEST(BitInputStreamTests, SIMPLE_TEST) {
     ASSERT_EQ(1, bis.readBit());
     ASSERT_EQ(0, bis.readBit());
 }
+*/

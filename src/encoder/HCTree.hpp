@@ -1,7 +1,9 @@
 /**
- * TODO: file header
+ * This file declares the structure of HCTree class,
+ * including its private variables and public methods
  *
- * Author:
+ * Author: Yuening YANG, Shenlang ZHOU
+ * Email: y3yang@ucsd.edu, shzhou@ucsd.edu
  */
 #ifndef HCTREE_HPP
 #define HCTREE_HPP
@@ -15,33 +17,48 @@
 
 using namespace std;
 
-/** TODO: class header */
+/** This class defines the Huffman-encoding Tree */
 class HCTree {
   private:
     HCNode* root;            // the root of HCTree
     vector<HCNode*> leaves;  // a vector storing pointers to all leaf HCNodes
 
   public:
-    /* TODO: add function header and implement */
-    HCTree() {}
+    /* Constructor that initialize a HCTree */
+    HCTree() : root(0) { leaves.reserve(256); }
 
-    /* TODO: add function header */
+    /* Destructor, automatically call it to avoid memory leak */
     ~HCTree();
 
-    /* TODO: add function header */
+    /* Build the HCTree from the given frequency vector
+      param: a vector contains the frequency of charactors to be encoded */
     void build(const vector<unsigned int>& freqs);
 
-    /* TODO: add function header */
+    /* */
     void encode(byte symbol, BitOutputStream& out) const;
 
-    /* TODO: add function header */
+    /* Write the encoding bits of given symbol to ostream. For
+      this function to work, must first build the tree
+      params:
+        symbol: a symbol to be encoded
+        out: the output stream, should be passed by reference */
     void encode(byte symbol, ostream& out) const;
 
-    /* TODO: add function header */
+    /*  */
     byte decode(BitInputStream& in) const;
 
-    /* TODO: add function header */
+    /* Get the sequence of bits from istream, decode, then return
+      param:
+        in: the input stream, should be passed by reference
+      return:
+        the decoded symbol */
     byte decode(istream& in) const;
+
+  private:
+    /* Helper function for destructor. Recursively deletes all the nodes.
+        argument: a pointer pointing to the root of the subtree to be deleted.
+     */
+    void deleteAll(HCNode* ptr);
 };
 
 #endif  // HCTREE_HPP
