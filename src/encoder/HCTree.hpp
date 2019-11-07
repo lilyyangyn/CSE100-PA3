@@ -25,7 +25,10 @@ class HCTree {
 
   public:
     /* Constructor that initialize a HCTree */
-    HCTree() : root(0) { leaves.reserve(256); }
+    HCTree() : root(0) {
+        leaves.reserve(256);
+        fill(leaves.begin(), leaves.end(), nullptr);
+    }
 
     /* Destructor, automatically call it to avoid memory leak */
     ~HCTree();
