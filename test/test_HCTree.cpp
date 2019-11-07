@@ -1,3 +1,9 @@
+/**
+ * This file performs unit tests for HCTree.
+ *
+ * Author: Yuening YANG, Shenlang Zhou
+ * Email: y3yang@ucse.edu
+ */
 #include <iostream>
 #include <string>
 #include <vector>
@@ -24,15 +30,18 @@ class SimpleHCTreeFixture : public ::testing::Test {
 };
 
 TEST_F(SimpleHCTreeFixture, TEST_ENCODE) {
+    // test normal encoding
     ostringstream os;
     tree.encode('a', os);
     ASSERT_EQ(os.str(), "10");
+    // clear ostream
     os.str("");
     tree.encode('c', os);
     ASSERT_EQ(os.str(), "0");
 }
 
 TEST_F(SimpleHCTreeFixture, TEST_DECODE) {
+    // test normal encoding
     istringstream is("11");
     ASSERT_EQ(tree.decode(is), 'b');
     istringstream is2("10110");
@@ -77,6 +86,7 @@ TEST(HCTreeTests, SMALL_TEST_DECODE) {
 }
 
 TEST(HCNode, TEST_PRINT) {
+    // test for printing HCNode
     HCNode* hcnode = new HCNode('a', 10);
     cout << *hcnode << endl;
     delete hcnode;
