@@ -32,10 +32,13 @@ void HCTree::build(const vector<unsigned int>& freqs) {
     // check if no empty input
     if (pq.size() == 0) {
         return;
+    } else if (pq.size() == 1) {
+        root = pq.top();
+        return;
     }
 
     // set EOF
-    HCNode* end = new HCNode(-1, EOF);
+    HCNode* end = new HCNode(0, EOF);
     leaves[256] = end;
     pq.push(end);
 
@@ -53,7 +56,7 @@ void HCTree::build(const vector<unsigned int>& freqs) {
         ptr2 = pq.top();
         pq.pop();
         // build the parent node
-        p = new HCNode(ptr1->count + ptr2->count, ptr1->symbol);
+        p = new HCNode(ptr1->count + ptr2->count, ptr2->symbol);
         p->c0 = ptr1;
         ptr1->p = p;
         ptr1->isZeroChild = true;
@@ -65,7 +68,6 @@ void HCTree::build(const vector<unsigned int>& freqs) {
     }
     // set root
     root = pq.top();
-    pq.pop();
 }
 
 /* Write the encoding bits of given symbol to the given BitOutputStream. For

@@ -33,21 +33,21 @@ TEST_F(SimpleHCTreeFixture, TEST_ENCODE) {
     // test normal encoding
     ostringstream os;
     tree.encode('a', os);
-    ASSERT_EQ(os.str(), "010");
+    ASSERT_EQ(os.str(), "101");
     // clear ostream
     os.str("");
     tree.encode('c', os);
-    ASSERT_EQ(os.str(), "00");
+    ASSERT_EQ(os.str(), "0");
     os.str("");
     tree.encode(EOF, os);
-    EXPECT_EQ(os.str(), "1");
+    EXPECT_EQ(os.str(), "100");
 }
 
 TEST_F(SimpleHCTreeFixture, TEST_DECODE) {
     // test normal encoding
-    istringstream is("011");
+    istringstream is("11");
     ASSERT_EQ(tree.decode(is), 'b');
-    istringstream is2("01001100");
+    istringstream is2("101110");
     ASSERT_EQ(tree.decode(is2), 'a');
     EXPECT_EQ(tree.decode(is2), 'b');
     EXPECT_EQ(tree.decode(is2), 'c');
