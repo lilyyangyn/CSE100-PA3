@@ -37,7 +37,10 @@ class HCTree {
       param: a vector contains the frequency of charactors to be encoded */
     void build(const vector<unsigned int>& freqs);
 
-    /* */
+    /* Write the encoding bits of given symbol to the given BitOutputStream. For
+      this function to work, must first build the tree
+        symbol: a symbol to be encoded
+        out: the output stream, should be passed by reference */
     void encode(byte symbol, BitOutputStream& out) const;
 
     /* Write the encoding bits of given symbol to ostream. For
@@ -47,7 +50,11 @@ class HCTree {
         out: the output stream, should be passed by reference */
     void encode(byte symbol, ostream& out) const;
 
-    /*  */
+    /* Get the sequence of bits from BitInputStream, decode, then return
+      param:
+        in: the input stream, should be passed by reference
+      return:
+        the decoded symbol */
     byte decode(BitInputStream& in) const;
 
     /* Get the sequence of bits from istream, decode, then return

@@ -11,6 +11,7 @@
 #include "FileUtils.hpp"
 #include "HCNode.hpp"
 #include "HCTree.hpp"
+#include "cxxopts.hpp"
 
 /* add pseudo compression with ascii encoding and naive header
  * (checkpoint)
@@ -60,23 +61,85 @@ void pseudoCompression(string inFileName, string outFileName) {
 }
 
 /* True compression with bitwise i/o and small header (final) */
-void trueCompression(string inFileName, string outFileName) {}
+void trueCompression(string inFileName, string outFileName) {
+    vector<unsigned int> freqs(256);
+
+    // open the input file
+    ifstream inFile;
+    inFile.open(inFileName);
+    // read the input file
+    unsigned char c;
+    while (1) {
+        c = inFile.get();
+        if (inFile.eof()) break;
+        freqs[c]++;
+    }
+
+    // build HCTree
+    HCTree* hctree = new HCTree();
+    hctree->build(freqs);
+
+    // open the output file
+    ofstream outFile;
+    outFile.open(outFileName, ios::out);
+
+    // write the header
+    for (int i = 0; i < 256; i++) {
+        outFile << freqs[i] << endl;
+    }
+
+    // reset to read input file from beginning
+    inFile.clear();
+    inFile.seekg(0, ios::beg);
+    // write encoded text
+    BitOutputStream bitOut(outFile);
+    while (1) {
+        c = inFile.get();
+        if (inFile.eof()) break;
+        hctree->encode(c, bitOut);
+    }
+    bitOut.flush();
+    // close files
+    inFile.close();
+    outFile.close();
+
+    // release memory
+    delete hctree;
+}
 
 /* Main program that runs the compress */
 int main(int argc, char* argv[]) {
-    const int NUM_ARG = 3;
-    if (argc != NUM_ARG) {
-        cout << "Invalid number of arguments.\n"
-             << "Usage: ./compress <input filename> <output filename>" << endl;
-        return -1;
-    }
-    if (!FileUtils::isValidFile(argv[1])) return -1;
+    cxxopts::Options options("./compress",
+                             "Compresses files using Huffman Encoding");
+    options.positional_help("./path_to_input_file ./path_to_output_file");
 
-    if (!FileUtils::isEmptyFile(argv[1])) {
-        pseudoCompression(argv[1], argv[2]);
+    bool isAsciiOutput = false;
+    string inFileName, outFileName;
+    options.allow_unrecognised_options().add_options()(
+        "ascii", "Write output in ascii mode instead of bit strem",
+        cxxopts::value<bool>(isAsciiOutput))(
+        "input", "", cxxopts::value<string>(inFileName))(
+        "output", "", cxxopts::value<string>(outFileName))(
+        "h, help", "Print help and exit");
+
+    options.parse_positional({"input", "output"});
+    auto userOptions = options.parse(argc, argv);
+
+    if (userOptions.count("help") || !FileUtils::isValidFile(inFileName) ||
+        outFileName.empty()) {
+        cout << options.help({""}) << std::endl;
+        exit(0);
+    }
+
+    if (!FileUtils::isEmptyFile(inFileName)) {
+        if (isAsciiOutput) {
+            pseudoCompression(inFileName, outFileName);
+        } else {
+            trueCompression(inFileName, outFileName);
+        }
     } else {
         ofstream outFile;
-        outFile.open(argv[2]);
+        outFile.open(outFileName);
         outFile.close();
     }
     return 0;

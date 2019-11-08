@@ -1,12 +1,25 @@
 /**
- * TODO: file header
+ * This file shows the implementation of BitInputStream class methods.
+ * Declaration can be found in 'BitInputStream.hpp'
  *
- * Author:
+ * Author: Yuening YANG
+ * Email: y3yang@ucsd.edu
  */
 #include "BitInputStream.hpp"
 
-/* TODO */
-void BitInputStream::fill() {}
+/* Fills the one byte buffer from input stream */
+void BitInputStream::fill() {
+    buf = in.get();
+    nbits = 7;
+}
 
-/* TODO */
-unsigned int BitInputStream::readBit() { return 0; }
+/* Read next bit from the buffer. if the buffer has been
+      already read, fill it */
+unsigned int BitInputStream::readBit() {
+    if (nbits == -1) {
+        fill();
+    }
+    unsigned int nextbit = (buf >> nbits) & 1;
+    nbits--;
+    return nextbit;
+}

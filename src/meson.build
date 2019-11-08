@@ -5,8 +5,8 @@ file_utils_dep = declare_dependency(include_directories : include_directories('.
 
 compress_exe = executable('compress.cpp.executable',
     sources : ['compress.cpp'],
-    dependencies : [file_utils_dep, hc_node_dep, hc_tree_dep])
+    dependencies : [cxxopts_dep, file_utils_dep, hc_node_dep, hc_tree_dep])
 
 uncompress_exe = executable('uncompress.cpp.executable',
     sources : ['uncompress.cpp'],
-    dependencies : [file_utils_dep, hc_node_dep, hc_tree_dep])
+    dependencies : [cxxopts_dep, file_utils_dep, hc_node_dep, hc_tree_dep])
