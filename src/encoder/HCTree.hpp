@@ -26,7 +26,7 @@ class HCTree {
   public:
     /* Constructor that initialize a HCTree */
     HCTree() : root(0) {
-        leaves.reserve(256);
+        leaves.reserve(257);
         fill(leaves.begin(), leaves.end(), nullptr);
     }
 

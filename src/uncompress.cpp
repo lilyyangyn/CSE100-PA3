@@ -40,13 +40,11 @@ void pseudoDecompression(string inFileName, string outFileName) {
     outFile.open(outFileName);
 
     // decode
-    byte symbol;
+    byte symbol = 'a';
     int counts = 0;
-    for (int i = 0; i < 256; i++) {
-        counts += freqs[i];
-    }
-    for (int i = 0; i < counts; i++) {
+    while (1) {
         symbol = hctree->decode(inFile);
+        if (symbol == (byte)EOF) break;
         outFile << symbol;
     }
     // close files
@@ -83,14 +81,12 @@ void trueDecompression(string inFileName, string outFileName) {
     outFile.open(outFileName);
 
     // decode
-    byte symbol;
+    byte symbol = 'a';
     int counts = 0;
-    for (int i = 0; i < 256; i++) {
-        counts += freqs[i];
-    }
     BitInputStream bitIn(inFile);
-    for (int i = 0; i < counts; i++) {
+    while (1) {
         symbol = hctree->decode(bitIn);
+        if (symbol == (byte)EOF) break;
         outFile << symbol;
     }
     // close files

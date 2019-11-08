@@ -52,6 +52,7 @@ void pseudoCompression(string inFileName, string outFileName) {
         if (inFile.eof()) break;
         hctree->encode(c, outFile);
     }
+    hctree->encode(EOF, outFile);
     // close files
     inFile.close();
     outFile.close();
@@ -98,6 +99,7 @@ void trueCompression(string inFileName, string outFileName) {
         if (inFile.eof()) break;
         hctree->encode(c, bitOut);
     }
+    hctree->encode(EOF, bitOut);
     bitOut.flush();
     // close files
     inFile.close();

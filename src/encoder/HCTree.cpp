@@ -29,6 +29,15 @@ void HCTree::build(const vector<unsigned int>& freqs) {
             pq.push(ptr);
         }
     }
+    // check if no empty input
+    if (pq.size() == 0) {
+        return;
+    }
+
+    // set EOF
+    HCNode* end = new HCNode(-1, EOF);
+    leaves[256] = end;
+    pq.push(end);
 
     if (pq.size() == 0) {
         return;
@@ -72,7 +81,12 @@ void HCTree::encode(byte symbol, BitOutputStream& out) const {
         return;
     }
 
-    HCNode* ptr = leaves[symbol];
+    HCNode* ptr;
+    if (symbol == (byte)EOF) {
+        ptr = leaves[256];
+    } else {
+        ptr = leaves[symbol];
+    }
     string buffer = "";
     while (ptr != root) {
         if (ptr->isZeroChild) {
@@ -102,8 +116,13 @@ void HCTree::encode(byte symbol, ostream& out) const {
         return;
     }
 
+    HCNode* ptr;
+    if (symbol == (byte)EOF) {
+        ptr = leaves[256];
+    } else {
+        ptr = leaves[symbol];
+    }
     string buffer = "";
-    HCNode* ptr = leaves[symbol];
     while (ptr != root) {
         if (ptr->isZeroChild) {
             buffer = '0' + buffer;
