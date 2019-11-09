@@ -9,6 +9,7 @@
 #define HCTREE_HPP
 
 #include <fstream>
+#include <map>
 #include <queue>
 #include <vector>
 #include "BitInputStream.hpp"
@@ -22,13 +23,11 @@ class HCTree {
   private:
     HCNode* root;            // the root of HCTree
     vector<HCNode*> leaves;  // a vector storing pointers to all leaf HCNodes
+    map<int, string> codes;
 
   public:
     /* Constructor that initialize a HCTree */
-    HCTree() : root(0) {
-        leaves.reserve(257);
-        fill(leaves.begin(), leaves.end(), nullptr);
-    }
+    HCTree() : root(0) { leaves.reserve(257); }
 
     /* Destructor, automatically call it to avoid memory leak */
     ~HCTree();

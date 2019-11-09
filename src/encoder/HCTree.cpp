@@ -27,6 +27,8 @@ void HCTree::build(const vector<unsigned int>& freqs) {
             leaves[i] = ptr;
             // push into minHeap to prepare building the tree
             pq.push(ptr);
+        } else {
+            leaves[i] = 0;
         }
     }
     // check if no empty input
@@ -65,6 +67,24 @@ void HCTree::build(const vector<unsigned int>& freqs) {
     }
     // set root
     root = pq.top();
+    // path map for quick query
+    HCNode* pointer;
+    string buffer;
+    for (int i = 0; i < 257; i++) {
+        if (leaves[i] != 0) {
+            pointer = leaves[i];
+            buffer = "";
+            while (pointer != root) {
+                if (pointer->isZeroChild) {
+                    buffer = '0' + buffer;
+                } else {
+                    buffer = '1' + buffer;
+                }
+                pointer = pointer->p;
+            }
+            codes.insert({i, buffer});
+        }
+    }
 }
 
 /* return the number of leaves of HCTree */
@@ -87,20 +107,11 @@ void HCTree::encode(byte symbol, BitOutputStream& out) const {
         return;
     }
 
-    HCNode* ptr;
+    string buffer;
     if (symbol == (byte)EOF) {
-        ptr = leaves[256];
+        buffer = codes.at(256);
     } else {
-        ptr = leaves[symbol];
-    }
-    string buffer = "";
-    while (ptr != root) {
-        if (ptr->isZeroChild) {
-            buffer = '0' + buffer;
-        } else {
-            buffer = '1' + buffer;
-        }
-        ptr = ptr->p;
+        buffer = codes.at(symbol);
     }
     for (int i = 0; i < buffer.length(); i++) {
         out.writeBit(buffer[i] - '0');
