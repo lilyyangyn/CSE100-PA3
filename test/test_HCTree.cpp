@@ -69,7 +69,7 @@ TEST(HCTreeTests, SMALL_TEST_ENCODE) {
     freqs['a'] = 10;
     tree2.build(freqs);
     tree2.encode('a', os);
-    EXPECT_EQ(os.str(), "0");
+    EXPECT_EQ(os.str(), "1");
 }
 
 TEST(HCTreeTests, SMALL_TEST_DECODE) {
@@ -84,7 +84,7 @@ TEST(HCTreeTests, SMALL_TEST_DECODE) {
     // one-node tree
     freqs['a'] = 10;
     tree2.build(freqs);
-    istringstream is2("0");
+    istringstream is2("1");
     EXPECT_EQ(tree2.decode(is2), 'a');
 }
 

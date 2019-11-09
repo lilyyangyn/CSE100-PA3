@@ -74,10 +74,10 @@ class HCTree {
     void getTree(ostream& out) const;
 
     /* reconstruct the tree according to the encoding header */
-    void reconstructTree(BitInputStream& in);
+    void reconstructTree(BitInputStream& in, int total);
 
     /* reconstruct the tree according to the encoding header */
-    void reconstructTree(ifstream& in);
+    void reconstructTree(ifstream& in, int total);
 
   private:
     /* Helper function for destructor. Recursively deletes all the nodes.

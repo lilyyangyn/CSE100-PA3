@@ -32,9 +32,6 @@ void HCTree::build(const vector<unsigned int>& freqs) {
     // check if no empty input
     if (pq.size() == 0) {
         return;
-    } else if (pq.size() == 1) {
-        root = pq.top();
-        return;
     }
 
     // set EOF
@@ -89,10 +86,6 @@ void HCTree::encode(byte symbol, BitOutputStream& out) const {
     if (root == 0) {
         return;
     }
-    if (root->c0 == 0 && root->c1 == 0) {
-        out.writeBit(0);
-        return;
-    }
 
     HCNode* ptr;
     if (symbol == (byte)EOF) {
@@ -121,11 +114,6 @@ void HCTree::encode(byte symbol, BitOutputStream& out) const {
         out: the output stream, should be passed by reference */
 void HCTree::encode(byte symbol, ostream& out) const {
     if (root == 0) {
-        return;
-    }
-    if (root->c0 == 0 && root->c1 == 0) {
-        // if only one symbol in the tree, output '0'
-        out << '0';
         return;
     }
 
@@ -260,19 +248,20 @@ void HCTree::getTreeHelper(HCNode* ptr, ostream& out) const {
 }
 
 /* get the tree structure. can be used to reconstruct the tree */
-void HCTree::getTree(BitOutputStream& out) const {
-    out.writeBit(0);
-    getTreeHelper(root, out);
-};
+void HCTree::getTree(BitOutputStream& out) const { getTreeHelper(root, out); };
 
 /* get the tree structure. can be used to reconstruct the tree */
-void HCTree::getTree(ostream& out) const {
-    out << '0';
-    getTreeHelper(root, out);
-};
+void HCTree::getTree(ostream& out) const { getTreeHelper(root, out); };
 
 /* reconstruct the tree according to the encoding header */
-void HCTree::reconstructTree(BitInputStream& in) {}
+void HCTree::reconstructTree(BitInputStream& in, int total) {}
 
 /* reconstruct the tree according to the encoding header */
-void HCTree::reconstructTree(ifstream& in) { char c; }
+void HCTree::reconstructTree(ifstream& in, int total) {
+    char c;
+    int count = 0;
+    c = in.get();
+    if (c == ' ')
+        while (count < total) {
+        }
+}
