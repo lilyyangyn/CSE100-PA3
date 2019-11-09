@@ -21,19 +21,15 @@ void pseudoDecompression(string inFileName, string outFileName) {
     // open the input file
     ifstream inFile;
     inFile.open(inFileName);
-    // read the header
-    int n;
-    for (int i = 0; i < 256; i++) {
-        freqs[i] = inFile.get() - '0';
-        while ((n = inFile.get()) != '\n') {
-            n = n - '0';
-            freqs[i] = freqs[i] * 10 + n;
-        }
+    // read the header and reconstruct HCTree
+    int count = 0;
+    int n = inFile.get() - '0';
+    while (n != '\n' - '0') {
+        count = count * 10 + n;
+        n = inFile.get() - '0';
     }
-
-    // construct HCTree
     HCTree* hctree = new HCTree();
-    hctree->build(freqs);
+    hctree->reconstructTree(inFile, count);
 
     // open the output file
     ofstream outFile;
@@ -62,30 +58,23 @@ void trueDecompression(string inFileName, string outFileName) {
     // open the input file
     ifstream inFile;
     inFile.open(inFileName);
-    // read the header
-    int n;
-    for (int i = 0; i < 256; i++) {
-        freqs[i] = inFile.get() - '0';
-        while ((n = inFile.get()) != '\n') {
-            n = n - '0';
-            freqs[i] = freqs[i] * 10 + n;
-        }
-    }
-
-    // construct HCTree
+    BitInputStream bitIn(inFile);
+    // read the header and reconstruct HCTree
+    int count = inFile.get() - 0;
     HCTree* hctree = new HCTree();
-    hctree->build(freqs);
+    hctree->reconstructTree(bitIn, count);
 
     // open the output file
     ofstream outFile;
     outFile.open(outFileName);
 
     // decode
-    byte symbol = 'a';
+    byte symbol = 0;
     int counts = 0;
-    BitInputStream bitIn(inFile);
     while (1) {
+        // cout << "symbol" << endl;
         symbol = hctree->decode(bitIn);
+        // cout << symbol << endl;
         if (symbol == (byte)EOF) break;
         outFile << symbol;
     }

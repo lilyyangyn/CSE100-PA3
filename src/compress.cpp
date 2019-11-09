@@ -40,6 +40,7 @@ void pseudoCompression(string inFileName, string outFileName) {
 
     // write the header
     outFile << hctree->getDistinctChars();
+    outFile << '\n';
     hctree->getTree(outFile);
 
     // reset to read input file from beginning
@@ -86,7 +87,9 @@ void trueCompression(string inFileName, string outFileName) {
     BitOutputStream bitOut(outFile);
 
     // write the header
-    outFile << (char)hctree->getDistinctChars();
+    byte count = 0;
+    count += hctree->getDistinctChars();
+    outFile << count;
     hctree->getTree(bitOut);
 
     // reset to read input file from beginning
