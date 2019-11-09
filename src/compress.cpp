@@ -39,9 +39,8 @@ void pseudoCompression(string inFileName, string outFileName) {
     outFile.open(outFileName, ios::out);
 
     // write the header
-    for (int i = 0; i < 256; i++) {
-        outFile << freqs[i] << endl;
-    }
+    outFile << hctree->getDistinctChars();
+    hctree->getTree(outFile);
 
     // reset to read input file from beginning
     inFile.clear();
@@ -83,17 +82,17 @@ void trueCompression(string inFileName, string outFileName) {
     // open the output file
     ofstream outFile;
     outFile.open(outFileName, ios::out);
+    // prepare the bit output stream
+    BitOutputStream bitOut(outFile);
 
     // write the header
-    for (int i = 0; i < 256; i++) {
-        outFile << freqs[i] << endl;
-    }
+    outFile << (char)hctree->getDistinctChars();
+    hctree->getTree(bitOut);
 
     // reset to read input file from beginning
     inFile.clear();
     inFile.seekg(0, ios::beg);
     // write encoded text
-    BitOutputStream bitOut(outFile);
     while (1) {
         c = inFile.get();
         if (inFile.eof()) break;

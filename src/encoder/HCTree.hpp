@@ -37,6 +37,9 @@ class HCTree {
       param: a vector contains the frequency of charactors to be encoded */
     void build(const vector<unsigned int>& freqs);
 
+    /* return the number of leaves of HCTree */
+    unsigned int getDistinctChars();
+
     /* Write the encoding bits of given symbol to the given BitOutputStream. For
       this function to work, must first build the tree
         symbol: a symbol to be encoded
@@ -64,11 +67,29 @@ class HCTree {
         the decoded symbol */
     byte decode(istream& in) const;
 
+    /* get the tree structure. can be used to reconstruct the tree */
+    void getTree(BitOutputStream& out) const;
+
+    /* get the tree structure. can be used to reconstruct the tree */
+    void getTree(ostream& out) const;
+
+    /* reconstruct the tree according to the encoding header */
+    void reconstructTree(BitInputStream& in);
+
+    /* reconstruct the tree according to the encoding header */
+    void reconstructTree(ifstream& in);
+
   private:
     /* Helper function for destructor. Recursively deletes all the nodes.
         argument: a pointer pointing to the root of the subtree to be deleted.
      */
     void deleteAll(HCNode* ptr);
+
+    /* Helper method for getTree, in order traverse the tree */
+    void getTreeHelper(HCNode* ptr, BitOutputStream& out) const;
+
+    /* Helper method for getTree, in order traverse the tree */
+    void getTreeHelper(HCNode* ptr, ostream& out) const;
 };
 
 #endif  // HCTREE_HPP

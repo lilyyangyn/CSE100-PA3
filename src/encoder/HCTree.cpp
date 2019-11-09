@@ -70,6 +70,17 @@ void HCTree::build(const vector<unsigned int>& freqs) {
     root = pq.top();
 }
 
+/* return the number of leaves of HCTree */
+unsigned int HCTree::getDistinctChars() {
+    unsigned int count = 0;
+    for (int i = 0; i < 257; i++) {
+        if (leaves[i] != 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
 /* Write the encoding bits of given symbol to the given BitOutputStream. For
       this function to work, must first build the tree
         symbol: a symbol to be encoded
@@ -199,3 +210,69 @@ void HCTree::deleteAll(HCNode* ptr) {
     deleteAll(ptr->c1);
     delete ptr;
 }
+
+/* Helper method for getTree, in order traverse the tree */
+void HCTree::getTreeHelper(HCNode* ptr, BitOutputStream& out) const {
+    if (ptr == 0) {
+        return;
+    }
+
+    if (ptr->c0 != 0 && ptr->c0->c0 != 0) {
+        out.writeBit(0);
+    }
+    getTreeHelper(ptr->c0, out);
+
+    if (ptr->c0 == 0 && ptr->c1 == 0) {
+        out.writeBit(1);
+        for (int i = 7; i > -1; i--) {
+            out.writeBit(((ptr->symbol >> i) & 1));
+        }
+        return;
+    } else {
+        if (ptr->c1->c1 != 0) {
+            out.writeBit(0);
+        }
+    }
+    getTreeHelper(ptr->c1, out);
+}
+
+/* Helper method for getTree, in order traverse the tree */
+void HCTree::getTreeHelper(HCNode* ptr, ostream& out) const {
+    if (ptr == 0) {
+        return;
+    }
+
+    if (ptr->c0 != 0 && ptr->c0->c0 != 0) {
+        out << '0';
+    }
+    getTreeHelper(ptr->c0, out);
+
+    if (ptr->c0 == 0 && ptr->c1 == 0) {
+        out << '1';
+        out << ptr->symbol;
+        return;
+    } else {
+        if (ptr->c1->c1 != 0) {
+            out << '0';
+        }
+    }
+    getTreeHelper(ptr->c1, out);
+}
+
+/* get the tree structure. can be used to reconstruct the tree */
+void HCTree::getTree(BitOutputStream& out) const {
+    out.writeBit(0);
+    getTreeHelper(root, out);
+};
+
+/* get the tree structure. can be used to reconstruct the tree */
+void HCTree::getTree(ostream& out) const {
+    out << '0';
+    getTreeHelper(root, out);
+};
+
+/* reconstruct the tree according to the encoding header */
+void HCTree::reconstructTree(BitInputStream& in) {}
+
+/* reconstruct the tree according to the encoding header */
+void HCTree::reconstructTree(ifstream& in) { char c; }
