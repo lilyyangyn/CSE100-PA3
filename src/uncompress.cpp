@@ -21,26 +21,32 @@ void pseudoDecompression(string inFileName, string outFileName) {
     // open the input file
     ifstream inFile;
     inFile.open(inFileName);
-    // read the header and reconstruct HCTree
-    int count = 0;
-    int n = inFile.get() - '0';
-    while (n != '\n' - '0') {
-        count = count * 10 + n;
-        n = inFile.get() - '0';
+    // read the header
+    int n;
+    for (int i = 0; i < 256; i++) {
+        freqs[i] = inFile.get() - '0';
+        while ((n = inFile.get()) != '\n') {
+            n = n - '0';
+            freqs[i] = freqs[i] * 10 + n;
+        }
     }
+
+    // construct HCTree
     HCTree* hctree = new HCTree();
-    hctree->reconstructTree(inFile, count);
+    hctree->build(freqs);
 
     // open the output file
     ofstream outFile;
     outFile.open(outFileName);
 
     // decode
-    byte symbol = 'a';
+    byte symbol;
     int counts = 0;
-    while (1) {
+    for (int i = 0; i < 256; i++) {
+        counts += freqs[i];
+    }
+    for (int i = 0; i < counts; i++) {
         symbol = hctree->decode(inFile);
-        if (symbol == (byte)EOF) break;
         outFile << symbol;
     }
     // close files

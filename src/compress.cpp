@@ -18,7 +18,6 @@
  *      params: names of the input file and the output file */
 void pseudoCompression(string inFileName, string outFileName) {
     vector<unsigned int> freqs(256);
-
     // open the input file
     ifstream inFile;
     inFile.open(inFileName);
@@ -39,9 +38,9 @@ void pseudoCompression(string inFileName, string outFileName) {
     outFile.open(outFileName, ios::out);
 
     // write the header
-    outFile << hctree->getDistinctChars();
-    outFile << '\n';
-    hctree->getTree(outFile);
+    for (int i = 0; i < 256; i++) {
+        outFile << freqs[i] << endl;
+    }
 
     // reset to read input file from beginning
     inFile.clear();
@@ -52,7 +51,6 @@ void pseudoCompression(string inFileName, string outFileName) {
         if (inFile.eof()) break;
         hctree->encode(c, outFile);
     }
-    hctree->encode(EOF, outFile);
     // close files
     inFile.close();
     outFile.close();
