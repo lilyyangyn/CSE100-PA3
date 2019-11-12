@@ -33,28 +33,26 @@ TEST_F(SimpleHCTreeFixture, TEST_ENCODE) {
     // test normal encoding
     ostringstream os;
     tree.encode('a', os);
-    ASSERT_EQ(os.str(), "101");
+    ASSERT_EQ(os.str(), "10");
     // clear ostream
     os.str("");
     tree.encode('c', os);
     ASSERT_EQ(os.str(), "0");
     os.str("");
-    tree.encode(EOF, os);
-    EXPECT_EQ(os.str(), "100");
 }
 
 TEST_F(SimpleHCTreeFixture, TEST_DECODE) {
     // test normal encoding
     istringstream is("11");
     ASSERT_EQ(tree.decode(is), 'b');
-    istringstream is2("101110");
+    istringstream is2("10110");
     ASSERT_EQ(tree.decode(is2), 'a');
     EXPECT_EQ(tree.decode(is2), 'b');
     EXPECT_EQ(tree.decode(is2), 'c');
 }
 
 TEST_F(SimpleHCTreeFixture, TEST_GETDISTINCTCHAR) {
-    EXPECT_EQ(tree.getDistinctChars(), 4);
+    EXPECT_EQ(tree.getDistinctChars(), 3);
 }
 
 /* Empty Tree & One-Node Tree Tests */
@@ -70,10 +68,10 @@ TEST(HCTreeTests, SMALL_TEST_ENCODE) {
 
     os.str("");
     // one-node tree
-    freqs['a'] = 10;
+    freqs['\n'] = 10;
     tree2.build(freqs);
-    tree2.encode('a', os);
-    EXPECT_EQ(os.str(), "1");
+    tree2.encode('\n', os);
+    EXPECT_EQ(os.str(), "0");
 }
 
 TEST(HCTreeTests, SMALL_TEST_DECODE) {
@@ -86,10 +84,10 @@ TEST(HCTreeTests, SMALL_TEST_DECODE) {
     EXPECT_EQ(tree1.decode(is1), ' ');
 
     // one-node tree
-    freqs['a'] = 10;
+    freqs['\n'] = 10;
     tree2.build(freqs);
-    istringstream is2("1");
-    EXPECT_EQ(tree2.decode(is2), 'a');
+    istringstream is2("0");
+    EXPECT_EQ(tree2.decode(is2), '\n');
 }
 
 TEST(HCTreeTests, SMALL_TEST_GETDISTINCTCHAR) {
@@ -101,7 +99,7 @@ TEST(HCTreeTests, SMALL_TEST_GETDISTINCTCHAR) {
 
     freqs['a'] = 10;
     tree2.build(freqs);
-    EXPECT_EQ(tree2.getDistinctChars(), 2);
+    EXPECT_EQ(tree2.getDistinctChars(), 1);
 }
 
 TEST(HCNode, TEST_PRINT) {

@@ -23,11 +23,10 @@ class HCTree {
   private:
     HCNode* root;            // the root of HCTree
     vector<HCNode*> leaves;  // a vector storing pointers to all leaf HCNodes
-    map<int, string> codes;
 
   public:
     /* Constructor that initialize a HCTree */
-    HCTree() : root(0) { leaves.reserve(257); }
+    HCTree() : root(0) { leaves.reserve(256); }
 
     /* Destructor, automatically call it to avoid memory leak */
     ~HCTree();

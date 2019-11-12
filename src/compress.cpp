@@ -68,10 +68,12 @@ void trueCompression(string inFileName, string outFileName) {
     inFile.open(inFileName);
     // read the input file
     unsigned char c;
+    unsigned int total = 0;
     while (1) {
         c = inFile.get();
         if (inFile.eof()) break;
         freqs[c]++;
+        total++;
     }
 
     // build HCTree
@@ -80,11 +82,18 @@ void trueCompression(string inFileName, string outFileName) {
 
     // open the output file
     ofstream outFile;
-    outFile.open(outFileName, ios::out);
+    outFile.open(outFileName);
     // prepare the bit output stream
     BitOutputStream bitOut(outFile);
 
     // write the header
+    byte bit;
+    // total number, can be up to 2ˆ32 = 4GB
+    for (int i = 3; i > -1; i--) {
+        bit = (total >> (8 * i)) & 255;
+        outFile << bit;
+    }
+    // distinct characters
     byte count = 0;
     count += hctree->getDistinctChars();
     outFile << count;
@@ -98,8 +107,8 @@ void trueCompression(string inFileName, string outFileName) {
         c = inFile.get();
         if (inFile.eof()) break;
         hctree->encode(c, bitOut);
+        cout << c;
     }
-    hctree->encode(EOF, bitOut);
     bitOut.flush();
     // close files
     inFile.close();

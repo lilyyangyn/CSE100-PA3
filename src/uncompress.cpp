@@ -59,13 +59,20 @@ void pseudoDecompression(string inFileName, string outFileName) {
 
 /* True decompression with bitwise i/o and small header (final) */
 void trueDecompression(string inFileName, string outFileName) {
-    vector<unsigned int> freqs(256);
-
     // open the input file
     ifstream inFile;
     inFile.open(inFileName);
     BitInputStream bitIn(inFile);
+
     // read the header and reconstruct HCTree
+    // get total number, 32 bits
+    int total = 0, bit;
+    for (int i = 0; i < 4; i++) {
+        // bit = bitIn.readBit();
+        bit = inFile.get();
+        total = (total << 8) + bit;
+    }
+    // get distinct number
     int count = inFile.get() - 0;
     HCTree* hctree = new HCTree();
     hctree->reconstructTree(bitIn, count);
@@ -77,11 +84,8 @@ void trueDecompression(string inFileName, string outFileName) {
     // decode
     byte symbol = 0;
     int counts = 0;
-    while (1) {
-        // cout << "symbol" << endl;
+    for (int i = 0; i < total; i++) {
         symbol = hctree->decode(bitIn);
-        // cout << symbol << endl;
-        if (symbol == (byte)EOF) break;
         outFile << symbol;
     }
     // close files
