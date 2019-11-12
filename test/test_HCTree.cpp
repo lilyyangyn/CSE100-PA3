@@ -53,6 +53,10 @@ TEST_F(SimpleHCTreeFixture, TEST_DECODE) {
     EXPECT_EQ(tree.decode(is2), 'c');
 }
 
+TEST_F(SimpleHCTreeFixture, TEST_GETDISTINCTCHAR) {
+    EXPECT_EQ(tree.getDistinctChars(), 4);
+}
+
 /* Empty Tree & One-Node Tree Tests */
 TEST(HCTreeTests, SMALL_TEST_ENCODE) {
     HCTree tree1, tree2;
@@ -86,6 +90,18 @@ TEST(HCTreeTests, SMALL_TEST_DECODE) {
     tree2.build(freqs);
     istringstream is2("1");
     EXPECT_EQ(tree2.decode(is2), 'a');
+}
+
+TEST(HCTreeTests, SMALL_TEST_GETDISTINCTCHAR) {
+    HCTree tree1, tree2;
+    vector<unsigned int> freqs(256);
+
+    tree1.build(freqs);
+    EXPECT_EQ(tree1.getDistinctChars(), 0);
+
+    freqs['a'] = 10;
+    tree2.build(freqs);
+    EXPECT_EQ(tree2.getDistinctChars(), 2);
 }
 
 TEST(HCNode, TEST_PRINT) {

@@ -41,10 +41,6 @@ void HCTree::build(const vector<unsigned int>& freqs) {
     leaves[256] = end;
     pq.push(end);
 
-    if (pq.size() == 0) {
-        return;
-    }
-
     // the tree is build in this way:
     // left child < right child according to count (alphabet when counts equal)
     // parent use the left child's symbol as its symbol
@@ -89,6 +85,9 @@ void HCTree::build(const vector<unsigned int>& freqs) {
 
 /* return the number of leaves of HCTree */
 unsigned int HCTree::getDistinctChars() {
+    if (root == 0) {
+        return 0;
+    }
     unsigned int count = 0;
     for (int i = 0; i < 257; i++) {
         if (leaves[i] != 0) {
