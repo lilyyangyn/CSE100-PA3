@@ -41,6 +41,17 @@ TEST_F(SimpleHCTreeFixture, TEST_ENCODE) {
     os.str("");
 }
 
+TEST_F(SimpleHCTreeFixture, TEST_ENCODE_BIT) {
+    // test normal encoding
+    stringstream ss;
+    BitOutputStream bos(ss);
+    tree.encode('a', bos);
+    bos.flush();
+    string bitsStr = "10000000";
+    unsigned int asciiVal = stoi(bitsStr, nullptr, 2);
+    ASSERT_EQ(ss.get(), asciiVal);
+}
+
 TEST_F(SimpleHCTreeFixture, TEST_DECODE) {
     // test normal encoding
     istringstream is("11");
@@ -51,8 +62,31 @@ TEST_F(SimpleHCTreeFixture, TEST_DECODE) {
     EXPECT_EQ(tree.decode(is2), 'c');
 }
 
+TEST_F(SimpleHCTreeFixture, TEST_DECODE_BIT) {
+    // test normal encoding
+    string bitsStr = "10110000";
+    string ascii = string(1, stoi(bitsStr, nullptr, 2));
+
+    stringstream ss;
+    ss.str(ascii);
+    BitInputStream bis(ss);
+    ASSERT_EQ(tree.decode(bis), 'a');
+    EXPECT_EQ(tree.decode(bis), 'b');
+    EXPECT_EQ(tree.decode(bis), 'c');
+}
+
 TEST_F(SimpleHCTreeFixture, TEST_GETDISTINCTCHAR) {
     EXPECT_EQ(tree.getDistinctChars(), 3);
+}
+
+TEST_F(SimpleHCTreeFixture, TEST_GETTREE) {
+    stringstream ss;
+    BitOutputStream bos(ss);
+
+    string bitsStr = "10110001";
+    unsigned int asciiVal = stoi(bitsStr, nullptr, 2);
+    tree.getTree(bos);
+    EXPECT_EQ(ss.get(), asciiVal);
 }
 
 /* Empty Tree & One-Node Tree Tests */
@@ -74,6 +108,30 @@ TEST(HCTreeTests, SMALL_TEST_ENCODE) {
     EXPECT_EQ(os.str(), "0");
 }
 
+TEST(HCTreeTests, SMALL_TEST_ENCODE_BIT) {
+    HCTree tree1, tree2;
+    vector<unsigned int> freqs(256);
+
+    stringstream ss;
+    BitOutputStream bos1(ss);
+    string bitsStr = "00000000";
+    unsigned int asciiVal = stoi(bitsStr, nullptr, 2);
+    // empty tree
+    tree1.build(freqs);
+    tree1.encode(' ', bos1);
+    bos1.flush();
+    EXPECT_EQ(ss.get(), asciiVal);
+
+    ss.str("");
+    BitOutputStream bos2(ss);
+    // one-node tree
+    freqs['\n'] = 10;
+    tree2.build(freqs);
+    tree2.encode('\n', bos2);
+    bos2.flush();
+    EXPECT_EQ(ss.get(), asciiVal);
+}
+
 TEST(HCTreeTests, SMALL_TEST_DECODE) {
     HCTree tree1, tree2;
     vector<unsigned int> freqs(256);
@@ -90,6 +148,29 @@ TEST(HCTreeTests, SMALL_TEST_DECODE) {
     EXPECT_EQ(tree2.decode(is2), '\n');
 }
 
+TEST(HCTreeTests, SMALL_TEST_DECODE_BIT) {
+    HCTree tree1, tree2;
+    vector<unsigned int> freqs(256);
+
+    string bitsStr = "00000000";
+    string ascii = string(1, stoi(bitsStr, nullptr, 2));
+
+    stringstream ss;
+    ss.str(ascii);
+    BitInputStream bis1(ss);
+
+    // empty tree
+    tree1.build(freqs);
+    EXPECT_EQ(tree1.decode(bis1), ' ');
+
+    // one-node tree
+    freqs['\n'] = 10;
+    tree2.build(freqs);
+    ss.str(ascii);
+    BitInputStream bis2(ss);
+    EXPECT_EQ(tree2.decode(bis2), '\n');
+}
+
 TEST(HCTreeTests, SMALL_TEST_GETDISTINCTCHAR) {
     HCTree tree1, tree2;
     vector<unsigned int> freqs(256);
@@ -100,6 +181,42 @@ TEST(HCTreeTests, SMALL_TEST_GETDISTINCTCHAR) {
     freqs['a'] = 10;
     tree2.build(freqs);
     EXPECT_EQ(tree2.getDistinctChars(), 1);
+}
+
+TEST(HCTreeTests, SMALL_TEST_GETTREE) {
+    HCTree tree1, tree2;
+    vector<unsigned int> freqs(256);
+
+    stringstream ss;
+    BitOutputStream bos(ss);
+
+    tree1.build(freqs);
+    string bitsStr = "00000000";
+    unsigned int asciiVal = stoi(bitsStr, nullptr, 2);
+    tree1.getTree(bos);
+    bos.flush();
+    EXPECT_EQ(ss.get(), asciiVal);
+
+    ss.str("");
+    freqs['a'] = 10;
+    tree2.build(freqs);
+    bitsStr = "01100001";
+    asciiVal = stoi(bitsStr, nullptr, 2);
+    tree2.getTree(bos);
+    bos.flush();
+    EXPECT_EQ(ss.get(), asciiVal);
+}
+
+TEST(HCTreeTests, TEST_RECONSTRUCT) {
+    string bitsStr = "1011000110101100001101100010";
+    string ascii = string(1, stoi(bitsStr, nullptr, 2));
+
+    stringstream ssi;
+    ssi.str(ascii);
+    BitInputStream bis(ssi);
+
+    HCTree* tree = new HCTree();
+    tree->reconstructTree(bis, 3);
 }
 
 TEST(HCNode, TEST_PRINT) {

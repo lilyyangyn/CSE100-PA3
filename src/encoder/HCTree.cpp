@@ -220,29 +220,6 @@ void HCTree::getTreeHelper(HCNode* ptr, BitOutputStream& out) const {
     getTreeHelper(ptr->c1, out);
 }
 
-/* Helper method for getTree, in order traverse the tree */
-void HCTree::getTreeHelper(HCNode* ptr, ostream& out) const {
-    if (ptr == 0) {
-        return;
-    }
-
-    if (ptr->c0 != 0 && ptr->c0->c0 != 0) {
-        out << '0';
-    }
-    getTreeHelper(ptr->c0, out);
-
-    if (ptr->c0 == 0 && ptr->c1 == 0) {
-        out << '1';
-        out << ptr->symbol;
-        return;
-    } else {
-        if (ptr->c1->c1 != 0) {
-            out << '0';
-        }
-    }
-    getTreeHelper(ptr->c1, out);
-}
-
 /* get the tree structure. can be used to reconstruct the tree */
 void HCTree::getTree(BitOutputStream& out) const {
     if (root == 0) {
@@ -252,17 +229,6 @@ void HCTree::getTree(BitOutputStream& out) const {
         for (int i = 7; i > -1; i--) {
             out.writeBit(((root->symbol >> i) & 1));
         }
-    }
-    getTreeHelper(root, out);
-};
-
-/* get the tree structure. can be used to reconstruct the tree */
-void HCTree::getTree(ostream& out) const {
-    if (root == 0) {
-        return;
-    }
-    if (root->c0 == 0 && root->c1 == 0) {
-        out << root->symbol;
     }
     getTreeHelper(root, out);
 };
@@ -334,61 +300,5 @@ void HCTree::reconstructTree(BitInputStream& in, int total) {
         }
         // get next
         c = in.readBit();
-    }
-}
-
-/* reconstruct the tree according to the encoding header */
-void HCTree::reconstructTree(ifstream& in, int total) {
-    byte c;
-    int count = 0;
-    root = new HCNode(0, ' ');
-    HCNode* ptr = root;
-
-    c = in.get();
-    HCNode* leaf = 0;
-    while (count < total) {
-        // bit 0
-        if (c == '0') {
-            // create node
-            if (ptr->c0 == 0) {
-                ptr->c0 = new HCNode(0, ' ');
-                ptr->c0->p = ptr;
-                ptr = ptr->c0;
-            } else {
-                ptr->c1 = new HCNode(0, ' ');
-                ptr->c1->p = ptr;
-                ptr = ptr->c1;
-            }
-        }
-        // bit 1
-        if (c == '1') {
-            // create leaf
-            c = in.get();  // get the character
-            count++;
-            leaf = new HCNode(0, c);
-            // add to the leaves list
-            if (c == (byte)EOF) {
-                leaves[256] = leaf;
-            } else {
-                leaves[c] = leaf;
-            }
-
-            // construct the tree
-            if (ptr->c0 == 0) {
-                ptr->c0 = leaf;
-                ptr->c0->p = ptr;
-
-                // now ptr pointing to the parent of the leaf
-            } else {
-                ptr->c1 = leaf;
-                ptr->c1->p = ptr;
-                if (count == total) break;
-                while (ptr != 0 && ptr->c1 != 0) {
-                    ptr = ptr->p;
-                }
-            }
-        }
-        // get next
-        c = in.get();
     }
 }

@@ -68,14 +68,8 @@ class HCTree {
     /* get the tree structure. can be used to reconstruct the tree */
     void getTree(BitOutputStream& out) const;
 
-    /* get the tree structure. can be used to reconstruct the tree */
-    void getTree(ostream& out) const;
-
     /* reconstruct the tree according to the encoding header */
     void reconstructTree(BitInputStream& in, int total);
-
-    /* reconstruct the tree according to the encoding header */
-    void reconstructTree(ifstream& in, int total);
 
   private:
     /* Helper function for destructor. Recursively deletes all the nodes.
@@ -85,9 +79,6 @@ class HCTree {
 
     /* Helper method for getTree, in order traverse the tree */
     void getTreeHelper(HCNode* ptr, BitOutputStream& out) const;
-
-    /* Helper method for getTree, in order traverse the tree */
-    void getTreeHelper(HCNode* ptr, ostream& out) const;
 };
 
 #endif  // HCTREE_HPP
