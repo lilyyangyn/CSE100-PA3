@@ -64,6 +64,10 @@ void trueDecompression(string inFileName, string outFileName) {
     inFile.open(inFileName);
     BitInputStream bitIn(inFile);
 
+    // open the output file
+    ofstream outFile;
+    outFile.open(outFileName);
+
     // read the header and reconstruct HCTree
     // get total number, 32 bits
     int total = 0, bit;
@@ -72,14 +76,18 @@ void trueDecompression(string inFileName, string outFileName) {
         bit = inFile.get();
         total = (total << 8) + bit;
     }
+
+    // check empty file
+    if (total == 0) {
+        inFile.close();
+        outFile.close();
+        return;
+    }
+
     // get distinct number
-    int count = inFile.get() - 0;
+    int count = inFile.get() + 1;
     HCTree* hctree = new HCTree();
     hctree->reconstructTree(bitIn, count);
-
-    // open the output file
-    ofstream outFile;
-    outFile.open(outFileName);
 
     // decode
     byte symbol = 0;

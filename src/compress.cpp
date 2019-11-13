@@ -93,9 +93,17 @@ void trueCompression(string inFileName, string outFileName) {
         bit = (total >> (8 * i)) & 255;
         outFile << bit;
     }
+
+    // check empty file
+    if (total == 0) {
+        inFile.close();
+        outFile.close();
+        return;
+    }
+
     // distinct characters
     byte count = 0;
-    count += hctree->getDistinctChars();
+    count = ((hctree->getDistinctChars() - 1) & 255);
     outFile << count;
     hctree->getTree(bitOut);
 
@@ -107,7 +115,6 @@ void trueCompression(string inFileName, string outFileName) {
         c = inFile.get();
         if (inFile.eof()) break;
         hctree->encode(c, bitOut);
-        cout << c;
     }
     bitOut.flush();
     // close files
