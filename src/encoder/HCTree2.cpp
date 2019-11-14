@@ -160,8 +160,6 @@ void HCTree2::getTreeHelper(HCNode2* ptr, BitOutputStream& out) const {
         for (int i = 15; i > -1; i--) {
             out.writeBit(((ptr->symbol >> i) & 1));
         }
-        unsigned char first = ((ptr->symbol >> 8) & 255);
-        unsigned char second = (ptr->symbol & 255);
         return;
     } else {
         if (ptr->c1->c1 != 0) {
