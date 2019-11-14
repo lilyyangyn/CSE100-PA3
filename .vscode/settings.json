@@ -13,7 +13,10 @@
         "tuple": "cpp",
         "utility": "cpp",
         "functional": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "bitset": "cpp",
+        "algorithm": "cpp",
+        "type_traits": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

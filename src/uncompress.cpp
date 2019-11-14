@@ -10,7 +10,9 @@
 
 #include "FileUtils.hpp"
 #include "HCNode.hpp"
+#include "HCNode2.hpp"
 #include "HCTree.hpp"
+#include "HCTree2.hpp"
 #include "cxxopts.hpp"
 
 /* Pseudo decompression with ascii encoding and naive header (checkpoint)
@@ -48,6 +50,65 @@ void pseudoDecompression(string inFileName, string outFileName) {
     for (int i = 0; i < counts; i++) {
         symbol = hctree->decode(inFile);
         outFile << symbol;
+    }
+    // close files
+    inFile.close();
+    outFile.close();
+
+    // release memory
+    delete hctree;
+}
+
+/* decompression of encoding two symbols, also with bitwise i/o and small header
+ * (final) */
+void blockDecompression(string inFileName, string outFileName) {
+    // open the input file
+    ifstream inFile;
+    inFile.open(inFileName);
+    BitInputStream bitIn(inFile);
+
+    // open the output file
+    ofstream outFile;
+    outFile.open(outFileName);
+
+    // read the header and reconstruct HCTree
+    // get total number, 32 bits
+    int total = 0, bit;
+    for (int i = 0; i < 4; i++) {
+        // bit = bitIn.readBit();
+        bit = inFile.get();
+        total = (total << 8) + bit;
+    }
+
+    // check empty file
+    if (total == 0) {
+        inFile.close();
+        outFile.close();
+        return;
+    }
+
+    // get distinct number
+    unsigned char before, after;
+    before = inFile.get();
+    after = inFile.get();
+    unsigned short count = (before << 8) + after + 1;
+    HCTree2* hctree = new HCTree2();
+    hctree->reconstructTree(bitIn, count);
+
+    // decode
+    byte2 symbol = 0;
+    unsigned char first, second;
+    for (int i = 0; i < total / 2; i++) {
+        symbol = hctree->decode(bitIn);
+        first = ((symbol >> 8) & 255);
+        second = (symbol & 255);
+        outFile << first << second;
+    }
+
+    if (total % 2 != 0) {
+        symbol = hctree->decode(bitIn);
+        first = ((symbol >> 8) & 255);
+        outFile << first;
     }
     // close files
     inFile.close();
@@ -111,10 +172,13 @@ int main(int argc, char* argv[]) {
     options.positional_help("./path_to_input_file ./path_to_output_file");
 
     bool isAsciiOutput = false;
+    bool isBlockEncoding = false;
     string inFileName, outFileName;
     options.allow_unrecognised_options().add_options()(
         "ascii", "Write output in ascii mode instead of bit strem",
         cxxopts::value<bool>(isAsciiOutput))(
+        "block", "Encoding two byte symbols instead of one byte symbols",
+        cxxopts::value<bool>(isBlockEncoding))(
         "input", "", cxxopts::value<string>(inFileName))(
         "output", "", cxxopts::value<string>(outFileName))(
         "h, help", "Print help and exit");
@@ -131,6 +195,8 @@ int main(int argc, char* argv[]) {
     if (!FileUtils::isEmptyFile(argv[1])) {
         if (isAsciiOutput) {
             pseudoDecompression(inFileName, outFileName);
+        } else if (isBlockEncoding) {
+            blockDecompression(inFileName, outFileName);
         } else {
             trueDecompression(inFileName, outFileName);
         }
