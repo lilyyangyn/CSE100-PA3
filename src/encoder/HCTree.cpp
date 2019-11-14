@@ -22,7 +22,7 @@ void HCTree::build(const vector<unsigned int>& freqs) {
     for (int i = 0; i < freqs.size(); i++) {
         if (freqs[i] > 0) {
             // create new node
-            ptr = new HCNode(freqs[i], char(i));
+            ptr = new HCNode(freqs[i], byte(i));
             // store it to the leaves vector
             leaves[i] = ptr;
             // push into minHeap to prepare building the tree
