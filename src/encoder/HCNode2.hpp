@@ -21,14 +21,14 @@ class HCNode2 {
   public:
     unsigned int count;     // the freqency of the symbol
     unsigned short symbol;  // byte in the file we're keeping track of
-    HCNode2* c0;             // pointer to '0' child
-    HCNode2* c1;             // pointer to '1' child
-    HCNode2* p;              // pointer to parent
+    HCNode2* c0;            // pointer to '0' child
+    HCNode2* c1;            // pointer to '1' child
+    HCNode2* p;             // pointer to parent
     bool isZeroChild;
 
     /* Constructor that initialize a HCNode2 */
     HCNode2(unsigned int count, byte2 symbol, HCNode2* c0 = 0, HCNode2* c1 = 0,
-           HCNode2* p = 0)
+            HCNode2* p = 0)
         : count(count),
           symbol(symbol),
           c0(c0),
@@ -44,9 +44,9 @@ ostream& operator<<(ostream& stm, const HCNode2& n) {
     return stm;
 }
 
-/* Comparator of HCNode2 pointer. In priority queue, HCNode2 ptr with lower count
- * has higher priority, and if count is the same, HCNode2 ptr with larger symbol
- * has higher prioruty.
+/* Comparator of HCNode2 pointer. In priority queue, HCNode2 ptr with lower
+ * count has higher priority, and if count is the same, HCNode2 ptr with larger
+ * symbol has higher prioruty.
  */
 struct HCNode2PtrComp {
     /* a comparator of HCNode2 pointer, can be used to generate MinHeap
